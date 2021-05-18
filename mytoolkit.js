@@ -427,9 +427,10 @@ var MyToolkit = (function() {
 
     var ScrollBar = function(draw, y){
         var scrollbar = draw.group();
-        var rect = scrollbar.rect(20, y+40).fill('white').stroke('purple');
+        var height = y;
+        var rect = scrollbar.rect(20, height+40).fill('white').stroke('purple');
         var upArrow = scrollbar.rect(20, 20).fill('pink').stroke('purple');
-        var downArrow = scrollbar.rect(20, 20).fill('pink').move(scrollbar.x(), y+40-20).stroke('purple');
+        var downArrow = scrollbar.rect(20, 20).fill('pink').move(scrollbar.x(), height+40-20).stroke('purple');
         var bar = scrollbar.rect(20, 30).fill('gray').move(scrollbar.x(), 20).stroke('purple');
         var scrollPos = 0;
         var defaultState = 'idle';
@@ -472,7 +473,7 @@ var MyToolkit = (function() {
         })
         downArrow.mouseup(function(){
             defaultState = 'down released';
-            if (scrollPos < y) {
+            if (scrollPos < height) {
                 scrollPos++;
                 bar.y(bar.y()+1);
                 scrollTransition('down');
@@ -506,11 +507,98 @@ var MyToolkit = (function() {
 
             scrollChanged: function(eventHandler){
                 scrollEvent = eventHandler;
+            },
+
+            getScrollPos: function(){
+                return scrollPos;
+            },
+
+            setHeight: function(y){
+                height = y;
             }
     }
 
+
+
     }
-return {Button, CheckBox, RadioButton, TextBox, ScrollBar}
+
+    var ProgressBar = function(draw, width) {
+        var progress = draw.group();
+        var width = width;
+        var scale = width/100;
+        var incrementVal = 0;
+        var barRect = progress.rect(width, 20).stroke('purple').fill('white');
+        var progressRect = progress.rect(incrementVal, 20).stroke('purple').fill('pink');
+        var defaultState = 'incomplete';
+        var incrementEvent = null;
+        var stateEvent = null;
+
+        
+        function progressIncremented(value) {
+            if (incrementVal + (value*scale) < width) {
+                incrementVal += (value*scale);
+                progressRect.size(incrementVal, 20);
+                incrementNotify();
+
+            }
+            else{
+                incrementVal += (value*scale);
+                progressRect.size(width, 20);
+                defaultState = 'complete';
+                incrementNotify();
+                stateTransition();
+            }
+            
+        }
+
+        function incrementNotify() {
+            if (incrementEvent != null) {
+                incrementEvent();
+            }
+        }
+
+        function stateTransition() {
+            if (stateEvent != null) {
+                stateEvent(defaultState);
+            }
+        }
+
+        return{
+            move: function(x,y) {
+                progress.move(x,y);
+            },
+            src: function(){
+                return scrollbar;
+            },
+            stateChanged: function(eventHandler){
+                stateEvent = eventHandler;
+            },
+
+            incrementChanged: function(eventHandler){
+                incrementEvent = eventHandler;
+            },
+
+            setWidth: function(newWidth){
+                width = newWidth;
+            },
+
+            setIncrementValue: function(value){
+                incrementVal = value;
+            },
+
+            getIncrementValue: function(){
+                return incrementVal;
+            },
+
+            increment: function(value){
+                progressIncremented(value);
+
+            }
+        }
+    
+
+    }
+return {Button, CheckBox, RadioButton, TextBox, ScrollBar, ProgressBar}
 }());
 
 export{MyToolkit}

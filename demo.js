@@ -59,4 +59,14 @@ scroll.stateChanged(function(e){
 });
 scroll.scrollChanged(function(e){
 	console.log(e);
-})
+});
+
+var progress = new MyToolkit.ProgressBar(draw, 200, 10);
+progress.move(1100, 100);
+progress.stateChanged(function(state){
+	console.log(state);
+});
+progress.incrementChanged(function(){
+	console.log('incremented!')
+});
+progress.increment(75);
