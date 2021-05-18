@@ -424,7 +424,93 @@ var MyToolkit = (function() {
             }
         }
     }
-return {Button, CheckBox, RadioButton, TextBox}
+
+    var ScrollBar = function(draw, y){
+        var scrollbar = draw.group();
+        var rect = scrollbar.rect(20, y+40).fill('white').stroke('purple');
+        var upArrow = scrollbar.rect(20, 20).fill('pink').stroke('purple');
+        var downArrow = scrollbar.rect(20, 20).fill('pink').move(scrollbar.x(), y+40-20).stroke('purple');
+        var bar = scrollbar.rect(20, 30).fill('gray').move(scrollbar.x(), 20).stroke('purple');
+        var scrollPos = 0;
+        var defaultState = 'idle';
+        var stateEvent = null;
+        var scrollEvent = null;
+
+        scrollbar.mouseover(function(){
+            defaultState = 'hover';
+            stateTransition();
+        })
+
+        scrollbar.mouseout(function(){
+            defaultState = 'idle';
+            stateTransition();
+        })
+        upArrow.mousedown(function(){
+            defaultState = 'up pressed';
+            this.fill({color: 'purple'});
+            stateTransition();
+
+
+        })
+        upArrow.mouseup(function(){
+            defaultState = 'up released';
+            if (scrollPos > 0) {
+                scrollPos--;
+                bar.y(bar.y()-1);
+                scrollTransition('up');
+            }
+            this.fill({color: 'pink'});
+            stateTransition();
+            
+
+        })
+
+        downArrow.mousedown(function(){
+            defaultState = 'down pressed';
+            this.fill({color: 'purple'});
+            stateTransition();
+        })
+        downArrow.mouseup(function(){
+            defaultState = 'down released';
+            if (scrollPos < y) {
+                scrollPos++;
+                bar.y(bar.y()+1);
+                scrollTransition('down');
+            }
+            this.fill({color: 'pink'});
+            stateTransition();
+            
+        })
+
+        function stateTransition(){
+            if (stateEvent != null) {
+                stateEvent(defaultState);
+            }
+        }
+
+        function scrollTransition(direction) {
+            if (scrollEvent != null) {
+                scrollEvent(direction);
+            }
+        }
+        return{
+            move: function(x,y) {
+                scrollbar.move(x,y);
+            },
+            src: function(){
+                return scrollbar;
+            },
+            stateChanged: function(eventHandler){
+                stateEvent = eventHandler;
+            },
+
+            scrollChanged: function(eventHandler){
+                scrollEvent = eventHandler;
+            }
+    }
+
+    }
+return {Button, CheckBox, RadioButton, TextBox, ScrollBar}
 }());
 
 export{MyToolkit}

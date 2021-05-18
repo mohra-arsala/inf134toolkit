@@ -3,7 +3,7 @@ import {SVG} from './svg.min.js';
 
 import {MyToolkit} from './mytoolkit.js';
 
-var draw = SVG().addTo('body').size(1000,1000);
+var draw = SVG().addTo('body').size(2000,2000);
 // Implement a MyToolkit Button
 var btn = new MyToolkit.Button(draw);
 btn.move(100,100);
@@ -49,5 +49,14 @@ text.stateChanged(function(e){
 	console.log(e);
 });
 text.textChanged(function(e){
+	console.log(e);
+});
+
+var scroll = new MyToolkit.ScrollBar(draw, 200);
+scroll.move(1000, 100);
+scroll.stateChanged(function(e){
+	console.log(e);
+});
+scroll.scrollChanged(function(e){
 	console.log(e);
 })
