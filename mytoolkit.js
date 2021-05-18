@@ -349,14 +349,78 @@ var MyToolkit = (function() {
         // var draw = SVG().addTo('body').size('100%','100%');
         var textbox = draw.group();
         var rect = textbox.rect(200,30).fill('white').stroke('black');
-        var text = textbox.text('hello').move(2,4);
-        var caret = textbox.line(45, 2.5, 45, 25).stroke({width:1, color:'black'});
+        var text = textbox.text('').move(2,4);
+        var caret = textbox.rect(2, 15).move(10, 10).fill({color: 'white'});
+        var runner = caret.animate().width(0);
+        var defaultState = 'idle';
+        var stateEvent = null;
+        var textEvent = null;
+        SVG.on(window, 'keyup', (event) => {
+            if (defaultState != 'idle') {
+                if (event.key == 'Backspace' && text.text().length>=1) {
+                    text.text(text.text().substring(0, text.text().length-1));
+                    caret.x(text.length()+textbox.x()+10);
+    
+                }
+                if (event.key.length==1) {
+                    text.text(text.text() + event.key);
+                    console.log(text.length());
+                    caret.x(text.length()+textbox.x()+10);
+                    console.log(caret.x());
+                    console.log(caret.y());
+                    // if (caret.x()>=rect.x()) {
+                    //     rect.x(rect.x()+10);
+                    // }
+                }
+                textEvent(event.key);
+            }
+            
+        
+        
+    })
+        console.log(rect);
+        runner.loop(1000, 1, 0);
+        textbox.move(10, 10);
+        textbox.mouseover(function(event){
+            if (defaultState == 'idle') {
+                defaultState = 'focus';
+                caret.fill({color: 'black'});
+            
+                
+            }
+            else{
+                defaultState = 'idle';
+                caret.fill({color: 'white'});
+            }
+        transition();
+        })
+
+        textbox.mouseout(function(event){
+            defaultState = 'idle';
+            caret.fill({color: 'white'});
+            transition();
+        })
+        
+        function transition(){
+            if (stateEvent != null) {
+                stateEvent(defaultState)
+            }
+        }
         return {
             move: function(x,y) {
                 textbox.move(x,y);
             },
             src: function(){
                 return textbox;
+            },
+            stateChanged: function(eventHandler){
+                stateEvent = eventHandler;
+            },
+            textChanged: function(eventHandler){
+                textEvent = eventHandler;
+            },
+            getText: function(){
+                return text.text();
             }
         }
     }

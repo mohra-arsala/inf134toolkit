@@ -45,3 +45,9 @@ radio.optionChanged(function(option){
 
 var text = new MyToolkit.TextBox(draw);
 text.move(700, 100);
+text.stateChanged(function(e){
+	console.log(e);
+});
+text.textChanged(function(e){
+	console.log(e);
+})
