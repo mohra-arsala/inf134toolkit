@@ -4,27 +4,25 @@ import {SVG} from './svg.min.js';
 
 var MyToolkit = (function() {
     var Button = function(draw){
-        var state = "idle";
-        // var draw = SVG().addTo('body').size('100%','100%');
         var group = draw.group();
         
-        var rect = group.rect(100,50).fill('red')
+        var rect = group.rect(100,50).fill('pink')
         var stateEvent = null;
         var clickEvent = null;
         var defaultState = "idle";
 
         rect.mouseover(function(){
-            this.fill({ color: 'blue'});
+            this.fill({ color: 'gray'});
             defaultState = "hover";
             transition();
         })
         rect.mouseout(function(){
-            this.fill({ color: 'red'});
+            this.fill({ color: 'pink'});
             defaultState = "idle";
             transition();
         })
         rect.mouseup(function(){
-            this.fill({ color: 'red'});
+            this.fill({ color: 'gray'});
             if (defaultState == "pressed") {
                 if (clickEvent != null) {
                     clickEvent(event)
@@ -35,22 +33,11 @@ var MyToolkit = (function() {
         })
 
         rect.mousedown(function(){
-            this.fill({ color: 'orange'});
+            this.fill({ color: 'purple'});
             defaultState = "pressed";
             transition();
         })
 
-        rect.mousemove(function(event) {
-            
-        })
-        // rect.click(function(event){
-        //     if (defaultState == 'unchecked') {
-                
-        //     }
-        //     this.fill({ color: 'pink'})
-        //     if(clickEvent != null)
-        //         clickEvent(event)
-        // })
 
         function transition(){
             if (stateEvent != null) {
@@ -236,7 +223,7 @@ var MyToolkit = (function() {
         var selectedButton;
 
         for (let i = 1; i <= n; i++) {
-            var newButton = buttons.circle(30, 30).fill('white').stroke('blue').move(2, 35*i);
+            var newButton = buttons.circle(30, 30).fill('white').stroke('purple').move(2, 35*i);
             
             newButton.attr('id', i);
             buttonArray.push(newButton);
@@ -246,7 +233,7 @@ var MyToolkit = (function() {
             // defaultState = 'hover'+event.target.id;
             lastButton = event.target.id;
             if (lastButton!="") {
-                buttonArray[lastButton-1].fill({ color: 'blue'});
+                buttonArray[lastButton-1].fill({ color: 'gray'});
                 defaultState = `hover${event.target.id}`;
                 stateTransition();
             }
@@ -256,7 +243,7 @@ var MyToolkit = (function() {
         buttons.mouseout(function(event){
             if (defaultState.startsWith('hover') ) {
                 if (selectedButton == lastButton) {
-                    buttonArray[lastButton-1].fill({color:'gray'});
+                    buttonArray[lastButton-1].fill({color:'pink'});
                 }
                 else{
                     buttonArray[lastButton-1].fill({color:'white'});
@@ -269,7 +256,7 @@ var MyToolkit = (function() {
         buttons.mouseup(function(){
             
             if (lastButton!="" ) {
-                buttonArray[lastButton-1].fill({ color: 'gray'});
+                buttonArray[lastButton-1].fill({ color: 'pink'});
                 if (selectedButton != lastButton) {
                     
                     if (selectedButton != null) {
@@ -293,7 +280,7 @@ var MyToolkit = (function() {
 
         buttons.mousedown(function(){
             if (lastButton!="") {
-                buttonArray[lastButton-1].fill({ color: 'pink'});
+                buttonArray[lastButton-1].fill({ color: 'purple'});
                 defaultState = "pressed";
                 stateTransition(); 
             }
@@ -598,7 +585,103 @@ var MyToolkit = (function() {
     
 
     }
-return {Button, CheckBox, RadioButton, TextBox, ScrollBar, ProgressBar}
+
+    var CustomSpinner = function(draw) {
+        var spinner = draw.group();
+        var btnDown = spinner.rect(40, 40).fill('pink').stroke('purple');
+        var btnUp = spinner.rect(40, 40).fill('pink').stroke('purple').move(100, spinner.y());
+        var numberSpot = spinner.rect(60, 40).fill('white').stroke('purple').move(40, spinner.y());
+        var number = 0;
+        var numberText = spinner.text(number.toString()).move(50, 10).font({family: 'Helvetica'});
+        var downIcon = spinner.text('▼').move(10, 10);
+        var upIcon = spinner.text('▲').move(110, 10);
+        var defaultState = 'idle';
+        var stateEvent = null;
+        var valueChangeEvent = null;
+        
+        spinner.mouseover(function(){
+            defaultState = 'hover';
+            stateTransition();
+        })
+
+        spinner.mouseout(function(){
+            defaultState = 'idle';
+            stateTransition();
+        })
+
+        btnUp.mousedown(function(){
+            defaultState = 'up pressed';
+            this.fill({color: 'gray'});
+            stateTransition();
+
+        })
+        
+        btnUp.mouseup(function(){
+            defaultState = 'up released';
+            number++;
+            numberText.text(number.toString());
+            valueChangeNotify(number);
+            this.fill({color: 'pink'});
+            stateTransition();
+            
+
+        })
+
+        btnDown.mousedown(function(){
+            defaultState = 'down pressed';
+            this.fill({color: 'gray'});
+            stateTransition();
+        })
+
+        btnDown.mouseup(function(){
+            defaultState = 'down released';
+            number--;
+            numberText.text(number.toString());
+            valueChangeNotify(number);
+            this.fill({color: 'pink'});
+            stateTransition();
+            
+        })
+
+        function stateTransition(){
+            if (stateEvent != null) {
+                stateEvent(defaultState);
+            }
+        }
+
+        function valueChangeNotify(value) {
+            if (valueChangeEvent != null) {
+                valueChangeEvent(value);
+            }
+        }
+        return{
+            move: function(x,y) {
+                spinner.move(x,y);
+            },
+            src: function(){
+                return spinner;
+            },
+            stateChanged: function(eventHandler){
+                stateEvent = eventHandler;
+            },
+
+            valueChanged: function(eventHandler){
+                valueChangeEvent = eventHandler;
+            },
+
+            // getScrollPos: function(){
+            //     return scrollPos;
+            // },
+
+            // setHeight: function(y){
+            //     height = y;
+            // }
+        }
+
+
+
+    }
+return {Button, CheckBox, RadioButton, TextBox, ScrollBar, ProgressBar, CustomSpinner}
 }());
 
 export{MyToolkit}

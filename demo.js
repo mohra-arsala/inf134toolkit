@@ -44,7 +44,7 @@ radio.optionChanged(function(option){
 })
 
 var text = new MyToolkit.TextBox(draw);
-text.move(700, 100);
+text.move(100, 200);
 text.stateChanged(function(e){
 	console.log(e);
 });
@@ -53,7 +53,7 @@ text.textChanged(function(e){
 });
 
 var scroll = new MyToolkit.ScrollBar(draw, 200);
-scroll.move(1000, 100);
+scroll.move(350, 200);
 scroll.stateChanged(function(e){
 	console.log(e);
 });
@@ -62,7 +62,7 @@ scroll.scrollChanged(function(e){
 });
 
 var progress = new MyToolkit.ProgressBar(draw, 200, 10);
-progress.move(1100, 100);
+progress.move(450, 300);
 progress.stateChanged(function(state){
 	console.log(state);
 });
@@ -70,3 +70,12 @@ progress.incrementChanged(function(){
 	console.log('incremented!')
 });
 progress.increment(75);
+
+var spinner = new MyToolkit.CustomSpinner(draw);
+spinner.move(700, 100);
+spinner.stateChanged(function(state){
+	console.log(state);
+});
+spinner.valueChanged(function(value){
+	console.log('value changed to', value);
+})
