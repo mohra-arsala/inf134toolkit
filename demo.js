@@ -18,10 +18,10 @@ btn.stateChanged(function(e){
 
 var check = new MyToolkit.CheckBox(draw);
 check.move(300, 100);
-check.onclick(function(e){
-	console.log(e);
-	console.log(e.target)
-});
+// check.onclick(function(e){
+// 	console.log(e);
+// 	console.log(e.target)
+// });
 check.stateChanged(function(e){
 	console.log(e);
 });
